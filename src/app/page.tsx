@@ -1,3 +1,3 @@
-import { Home } from "@/pages/home";
+import { ControlledHome } from "@/pages/controlled-home";
 
-export default Home;
+export default ControlledHome;

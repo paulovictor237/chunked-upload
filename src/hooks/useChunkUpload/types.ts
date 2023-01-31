@@ -1,13 +1,9 @@
 export type Props = {
   uploadApi: UploadApi;
   chunkSize?: number;
-  onFinished?: (response: any) => void;
+  onSuccess?: (response: any) => void;
+  onAbort?: (fileName: string) => void;
 };
-
-export type UploadApi = (props: {
-  data: string;
-  params: URLSearchParams;
-}) => Promise<any>;
 
 export type FileProps = {
   currentChunkIndex: number;
@@ -16,3 +12,13 @@ export type FileProps = {
   chunks: number;
   status: "finished" | "progress";
 };
+
+export type UploadApiParms = {
+  name: string;
+  size: string;
+  index: string;
+  total: string;
+  file: string;
+};
+
+export type UploadApi = (data: UploadApiParms) => Promise<any>;

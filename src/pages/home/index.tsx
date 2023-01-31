@@ -16,7 +16,7 @@ export const Home = () => {
 
   const { addFile, status, progress } = useChunkUpload({
     uploadApi: uploadFile,
-    onFinished: (response) => setServerLink((p) => [...p, response]),
+    onSuccess: (response) => setServerLink((p) => [...p, response]),
   });
 
   const addNewFile = () => {

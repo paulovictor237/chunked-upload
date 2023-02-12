@@ -15,19 +15,20 @@ export const useFileUpload = (
   file: File,
   apiUrl: string,
   options?: FileUploadOptions
-): ProgressStatus => {
+): ProgressStatus & { addFile: (newFile: File) => void } => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<"in progress" | "finished">(
     "in progress"
   );
+  const [currentFile, setCurrentFile] = useState(file);
 
   useEffect(() => {
     const upload = async () => {
       const chunks = [];
       let start = 0;
-      while (start < file.size) {
+      while (start < currentFile.size) {
         const end = start + chunkSize;
-        chunks.push(file.slice(start, end));
+        chunks.push(currentFile.slice(start, end));
         start = end;
       }
 
@@ -57,7 +58,13 @@ export const useFileUpload = (
     };
 
     upload();
-  }, [file, apiUrl, options]);
+  }, [currentFile, apiUrl, options]);
 
-  return { progress, status };
+  const addFile = (newFile: File) => {
+    setCurrentFile(newFile);
+    setProgress(0);
+    setStatus("in progress");
+  };
+
+  return { progress, status, addFile };
 };

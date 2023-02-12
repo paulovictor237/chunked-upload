@@ -15,12 +15,16 @@ export const useFileUpload = (
   file: File,
   apiUrl: string,
   options?: FileUploadOptions
-): ProgressStatus & { addFile: (newFile: File) => void } => {
+): ProgressStatus & {
+  addFile: (newFile: File) => void;
+  abortUpload: () => void;
+} => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<"in progress" | "finished">(
     "in progress"
   );
   const [currentFile, setCurrentFile] = useState(file);
+  const [abortController, setAbortController] = useState(new AbortController());
 
   useEffect(() => {
     const upload = async () => {
@@ -40,6 +44,7 @@ export const useFileUpload = (
         const response = await fetch(apiUrl, {
           method: "POST",
           body: formData,
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -58,13 +63,24 @@ export const useFileUpload = (
     };
 
     upload();
-  }, [currentFile, apiUrl, options]);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [currentFile, apiUrl, options, abortController]);
 
   const addFile = (newFile: File) => {
     setCurrentFile(newFile);
     setProgress(0);
     setStatus("in progress");
+    setAbortController(new AbortController());
   };
 
-  return { progress, status, addFile };
+  const abortUpload = () => {
+    abortController.abort();
+    setProgress(0);
+    setStatus("in progress");
+  };
+
+  return { progress, status, addFile, abortUpload };
 };

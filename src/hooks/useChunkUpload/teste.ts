@@ -7,7 +7,15 @@ interface ProgressStatus {
   status: "in progress" | "finished";
 }
 
-export const useFileUpload = (file: File, apiUrl: string): ProgressStatus => {
+interface FileUploadOptions {
+  onSuccess?: (response: any) => void;
+}
+
+export const useFileUpload = (
+  file: File,
+  apiUrl: string,
+  options?: FileUploadOptions
+): ProgressStatus => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<"in progress" | "finished">(
     "in progress"
@@ -41,10 +49,15 @@ export const useFileUpload = (file: File, apiUrl: string): ProgressStatus => {
       }
 
       setStatus("finished");
+
+      if (options && options.onSuccess) {
+        const response = await fetch(apiUrl);
+        options.onSuccess(await response.json());
+      }
     };
 
     upload();
-  }, [file, apiUrl]);
+  }, [file, apiUrl, options]);
 
   return { progress, status };
 };

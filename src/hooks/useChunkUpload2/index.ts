@@ -18,14 +18,14 @@ export const useFileUpload = ({
     const length = Math.ceil(currentFile.size / chunkSize);
     const staticData: Omit<Data, "base64" | "index"> = {
       name: currentFile.name,
-      size: currentFile.size + "",
-      length: length + "",
+      size: currentFile.size,
+      length: length,
     };
     try {
       for (let index = 0; index < length; index++) {
         const blob = Blob({ index, chunkSize, file: currentFile });
         const base64 = (await convertFileToBase64(blob as File)) as string;
-        const data: Data = { ...staticData, base64, index: index + "" };
+        const data: Data = { ...staticData, base64, index };
         const response = await queryFn({
           data,
           signal: abortController.signal,

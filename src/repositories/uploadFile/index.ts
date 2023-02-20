@@ -17,9 +17,9 @@ export const uploadFile: UploadApi = async (data) => {
 export const uploadFile2: QueryFn = async ({ data, signal }) => {
   const params = new URLSearchParams();
   params.set("name", data.name);
-  params.set("size", data.size);
-  params.set("currentChunkIndex", data.index);
-  params.set("totalChunks", data.length);
+  params.set("size", data.size + "");
+  params.set("currentChunkIndex", data.index + "");
+  params.set("totalChunks", data.length + "");
   const headers = { "Content-Type": "application/octet-stream" };
   const url = "http://localhost:4001/upload?" + params.toString();
   const response = await axios.post(url, data.base64, { headers, signal });

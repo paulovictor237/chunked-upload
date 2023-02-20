@@ -8,9 +8,9 @@ export type Props = {
 
 export type Data = {
   name: string;
-  size: string;
-  index: string;
-  length: string;
+  size: number;
+  index: number;
+  length: number;
   base64: string;
 };
 

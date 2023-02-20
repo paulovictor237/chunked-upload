@@ -2,7 +2,7 @@
 import { Button } from "@/components/button";
 import { ControlledChunkFile } from "@/components/controlled-chunk-file";
 import { ControlledForm } from "@/components/controlled-form";
-import { uploadFile } from "@/repositories/uploadFile";
+import { uploadFile, uploadFile2 } from "@/repositories/uploadFile";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
@@ -21,7 +21,7 @@ export const ControlledHome = () => {
         onSubmit={onSubmit}
         className="flex flex-col gap-4 p-4 rounded-md bg-neutral-400"
       >
-        <ControlledChunkFile name="file" uploadApi={uploadFile}>
+        <ControlledChunkFile name="file" uploadApi={uploadFile2}>
           Drop your files here
         </ControlledChunkFile>
 

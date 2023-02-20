@@ -1,5 +1,5 @@
 import { InputErrorMessage } from "@/components/input-error";
-import { useChunkUpload } from "@/hooks/useChunkUpload";
+import { useFileUpload } from "@/hooks/useChunkUpload2";
 import Image from "next/image";
 import { FC, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -25,10 +25,9 @@ export const ControlledChunkFile: FC<Props> = ({
   const [dropzoneActive, setDropzoneActive] = useState(false);
   const [fileName, setFileName] = useState("");
 
-  const { addFile, progress, abortRequest } = useChunkUpload({
-    uploadApi,
+  const { addFile, progress, abortQuery } = useFileUpload({
+    queryFn: uploadApi,
     onSuccess: (response) => setValue(name, response),
-    onAbort: () => {},
   });
 
   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -47,7 +46,7 @@ export const ControlledChunkFile: FC<Props> = ({
   };
 
   const remove = () => {
-    setFileName(""), setValue(name, ""), abortRequest();
+    setFileName(""), setValue(name, ""), abortQuery();
   };
 
   const progressColor =

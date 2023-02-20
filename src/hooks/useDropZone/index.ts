@@ -1,20 +1,24 @@
-import { useState, DragEvent } from "react";
-import { HandleDrop, OnDragOver } from "./types";
+import { useState } from "react";
+import { OnDrop, Props } from "./types";
 
-export const useDropZone = () => {
-  const [dropzoneActive, setDropzoneActive] = useState(false);
+export const useDND = ({ callBack }: Props) => {
+  const [activeDND, setActiveDND] = useState(false);
 
-  const onDragOver: OnDragOver = (e, active) => {
+  const onDragOver: OnDrop = (e) => {
     e.preventDefault();
-    setDropzoneActive(active);
+    setActiveDND(true);
+  };
+  const onDragLeave: OnDrop = (e) => {
+    e.preventDefault();
+    setActiveDND(false);
   };
 
-  const handleDrop: HandleDrop = (e, setFile) => {
+  const onDrop: OnDrop = (e) => {
     e.preventDefault();
-    setDropzoneActive(false);
-    const currentFile = e.dataTransfer.files;
-    setFile(currentFile);
+    e.stopPropagation();
+    setActiveDND(false);
+    callBack(e);
   };
 
-  return { dropzoneActive, onDragOver, handleDrop };
+  return { activeDND, subscribeDND: { onDragOver, onDragLeave, onDrop } };
 };

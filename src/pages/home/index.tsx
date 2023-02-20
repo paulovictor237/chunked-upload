@@ -1,18 +1,21 @@
 "use client";
 import { useChunkUpload } from "@/hooks/useChunkUpload";
-import { useDropZone } from "@/hooks/useDropZone";
+import { useDND } from "@/hooks/useDropZone";
 import { uploadFile } from "@/repositories/uploadFile";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { DragEvent } from "react";
 
 export const Home = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [currentFileIndex, setCurrentFileIndex] = useState<number>(0);
   const [serverLink, setServerLink] = useState<string[]>([]);
 
-  const { dropzoneActive, handleDrop, onDragOver } = useDropZone();
+  const { activeDND, subscribeDND } = useDND({
+    callBack: (e) => {
+      setFiles((p) => [...p, ...Array.from(e.dataTransfer.files)]);
+    },
+  });
 
   const { addFile, status, progress } = useChunkUpload({
     uploadApi: uploadFile,
@@ -33,12 +36,6 @@ export const Home = () => {
     return progress;
   };
 
-  const onDrop = (e: DragEvent<HTMLElement>) => {
-    handleDrop(e, (newFiles) =>
-      setFiles((p) => [...p, ...Array.from(newFiles)])
-    );
-  };
-
   useEffect(() => {
     addNewFile();
   }, [files.length, status]);
@@ -46,12 +43,10 @@ export const Home = () => {
   return (
     <main className="p-5 text-white bg-gray-700 h-screen">
       <section
-        onDragOver={(e) => onDragOver(e, true)}
-        onDragLeave={(e) => onDragOver(e, false)}
-        onDrop={(e) => onDrop(e)}
+        {...subscribeDND}
         className={twMerge(
           "text-center uppercase border-2 p-6 border-dashed rounded-md ",
-          dropzoneActive
+          activeDND
             ? "border-yellow-500 border-solid bg-blue-500"
             : "border-blue-500"
         )}
